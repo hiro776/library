@@ -1,0 +1,106 @@
+/* Author: Rohit Mehta */
+
+
+/* Redressed fonts.
+* usage: font-family: 'Redressed', cursive; 
+*/
+@import url('https://fonts.googleapis.com/css2?family=Redressed&display=swap');
+
+:root {
+    --top-color: #edeaaa;
+    --bg-color: #a8835a;
+    --shadows: #714b23;
+    --title-color: #401b4d;
+    --book-bg-color: #ad9065;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+}
+
+header.top {
+    background-color: var(--top-color);
+    font-family: 'Redressed', cursive;
+    font-size: 48pt;
+    text-align: center;
+    color: var(--title-color);
+    text-shadow: 1px 1px var(--shadows);
+    padding: .65px;
+    box-shadow: 0 1px 2px var(--shadows);
+}
+
+.buttons {
+    width: 100px;
+    margin: auto;
+    margin-top: 1rem;
+    text-align: center;
+    font-family: monospace, sans-serif;
+}
+
+button#add-book {
+    background-color: var(--book-bg-color);
+    border: 0;
+    padding: .5rem;
+    border-radius: 20px;
+    box-shadow: 0 0 5px var(--shadows);
+    transition: all 0.5s ease-out;
+}
+
+button#add-book:hover {
+    background-color: var(--bg-color);
+}
+
+button#add-book:active {
+    box-shadow: 0 -2px 2px var(--shadows) inset;
+}
+
+/* shelf */
+.shelf {
+    padding: 1.5rem;
+    margin: auto;
+    max-width: 1000px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* each book element inside of shelf */
+.book {
+    position: relative;
+    width: 150px;
+    height: 200px;
+    border: 1px solid var(--shadows);
+    box-shadow: -3px 3px 1px var(--shadows);
+    padding: .85em;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    background-color: var(--book-bg-color);
+}
+
+/* book title */
+header.title {
+    font-weight: bold;
+}
+
+/* book author */
+.book > p {
+    font-size: small;
+}
+
+/* book read-status */
+.read-status {
+    width: 100%;
+    text-align: center;
+    font-size: smaller;
+    border-top: 1px solid var(--shadows);
+}
