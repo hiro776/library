@@ -1,53 +1,59 @@
-/*
-Project Library
+/**
+ * Project Library
+ *
+ * This Project is inspired from The Odin Project Curriculum
+ *
+ * Author: Rohit Mehta
+**/
 
-This Project is inspired from The Odin Project Curriculum
-*/
-// Author: Rohit Mehta
+// Constants:
+const shelf = document.querySelector('.shelf');
+const form = document.querySelector('form.book-form');
+const formWrapper = document.querySelector('div.form-wrapper');
+const cancelBtn = document.querySelector('button.cancel');
+const submitBtn = document.querySelector('button.submit');
+const addBookBtn = document.querySelector('button.add-book');
 
 let myLibrary = [];
 
-// Book: String String Number Boolean -> Object
-// creates an Object, Book, taking book's title, author, pagecount, and readstatus
-//          readStatus === True;        Book is Read
-//          readStatus === False;       Book is not Read or being currently reading
+// Book Object Constructor.
 function Book(title, author, pageCount, readStatus) {
     this.title = title;
     this.author = author;
     this.pageCount = pageCount;
-    this.readStatus = readStatus;
+    this.readStatus = readStatus; // True -means read, False -in all other cases
     this.info = function () {
         return title + ', ' + author + ', ' + pageCount + ', ' + readStatus;
     }
 }
 
-// Add new book object into the myLibrary array
 function addBookToLibrary(book) {
-    // add to Library only if the book is a Book Object
     if (book.constructor === Book)
         myLibrary.push(book);
 }
 
+
+// for testing:
 const book1 = new Book('Practical C Programming', 'Steve OUaline', 400, true);
 const book2 = new Book('A Complete Guide to C++ Programming', 'Ulla Kirch', 846, false);
 const book3 = new Book('Pro Git', 'Scott Chacon', 441, false);
 const book4 = new Book('Clean Code', 'Robert C. Martin', 462, false);
 const book5 = new Book('C Programming Tutorial', 'Tutorialspoint', 200, true);
+// console.log(cprogramming.constructor === Book);
 
 addBookToLibrary(book1);
 addBookToLibrary(book2);
 addBookToLibrary(book3);
 addBookToLibrary(book4);
 addBookToLibrary(book5);
+// ^^for testing.
 
-// console.log(cprogramming.constructor === Book);
+addBookBtn.onclick = () => formWrapper.style.visibility = 'visible';
+cancelBtn.onclick = () => formWrapper.style.visibility = 'hidden';
 
-// get the shelf where we'll be putting our books
-const shelf = document.querySelector('.shelf');
-
-// function to add books to shelf from myLibrary
-const putBooks = (books) => {
-
+// put them on the shelf
+const displayLibrary = (books) => {
+/* 
     for (let i = 0; i < books.length; i++) {
         const div = document.createElement('div');
         div.setAttribute('class', 'book');
@@ -68,7 +74,8 @@ const putBooks = (books) => {
         div.appendChild(readStatus);
 
         shelf.appendChild(div);
-    }
+    } */
+
 }
 
-putBooks(myLibrary);
+displayLibrary(myLibrary);
