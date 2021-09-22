@@ -8,13 +8,12 @@
 
 // Constants:
 const shelf = document.querySelector('.shelf');
-const form = document.querySelector('form.book-form');
-const formWrapper = document.querySelector('div.form-wrapper');
+const form = document.querySelector('form');
 const cancelBtn = document.querySelector('button.cancel');
-const submitBtn = document.querySelector('button.submit');
+const submitBtn = document.querySelector('button[type="submit"]');
 const addBookBtn = document.querySelector('button.add-book');
 
-let myLibrary = [];
+const Library = [];
 
 // Book Object Constructor.
 function Book(title, author, pageCount, readStatus) {
@@ -27,11 +26,106 @@ function Book(title, author, pageCount, readStatus) {
     }
 }
 
-function addBookToLibrary(book) {
+const addBookToLibrary = (book) => {
     if (book.constructor === Book)
-        myLibrary.push(book);
+        Library.push(book);
 }
 
+addBookBtn.addEventListener('click', () => {
+    form.parentNode.style.visibility = 'visible';
+});
+cancelBtn.onclick = () => form.parentNode.style.visibility = 'hidden';
+
+form.addEventListener("submit", (event) => {
+    // form.parentNode.style.visibility = 'hidden';
+
+    console.log(form.name);
+});
+
+
+
+// remove the Book from Library at index i
+const removeBook = i => {
+    Library.splice(i, 1);
+}
+
+// Toggle read status of the book at index i
+const toggleReadAt = i => {
+    if (Library[i].readStatus)
+        Library[i].readStatus = false;
+    else
+        Library[i].readStatus = true;
+}
+
+// Number -> DocumentElement
+// create a div element with class 'book' and data-id as the
+// given number. Add book information from the Library[i]
+const createBookElement = (i) => {
+    const book = document.createElement('div');
+    book.setAttribute('class', 'book');
+    book.setAttribute('data-id', i);
+
+    const spanClose = document.createElement('span');
+    spanClose.setAttribute('class', 'close');
+    spanClose.setAttribute('title', 'Remove this book');
+    spanClose.textContent = 'x';
+
+    spanClose.addEventListener('click', () => {
+        const index = spanClose.parentNode.getAttribute('data-id');
+
+        console.log(index);
+
+        removeBook(index);
+
+        updateLibraryDisplay();
+    });
+
+    const titleDiv = document.createElement('div');
+    titleDiv.setAttribute('class', 'title');
+    titleDiv.textContent = Library[i].title;
+
+    const authorDiv = document.createElement('div');
+    authorDiv.setAttribute('class', 'author');
+    authorDiv.textContent = Library[i].author;
+
+    const pg = document.createElement('div');
+    pg.setAttribute('class', 'pg');
+    pg.textContent = Library[i].pageCount + ' Pages';
+
+    const readDiv = document.createElement('div');
+    readDiv.setAttribute('class', 'read');
+    readDiv.setAttribute('title', 'Toggle Read Status');
+    readDiv.textContent = 'Read ' + ((Library[i].readStatus) ? '✅' : '❌');
+
+    readDiv.addEventListener('click', () => {
+        const index = readDiv.parentNode.getAttribute('data-id');
+
+        toggleReadAt(index);
+
+        updateLibraryDisplay();
+    });
+
+    book.appendChild(spanClose);
+    book.appendChild(titleDiv);
+    book.appendChild(authorDiv);
+    book.appendChild(pg);
+    book.appendChild(readDiv);
+
+    return book;
+}
+
+const updateLibraryDisplay = () => {
+    // remove all old childs from the shelf
+    while (shelf.firstChild) {
+        shelf.removeChild(shelf.firstChild);
+    }
+
+    // and add new ones instead
+    for (let i = 0; i < Library.length; i++) {
+        const book = createBookElement(i);
+        shelf.appendChild(book);
+    }
+}
 
 // for testing:
 const book1 = new Book('Practical C Programming', 'Steve OUaline', 400, true);
@@ -48,34 +142,5 @@ addBookToLibrary(book4);
 addBookToLibrary(book5);
 // ^^for testing.
 
-addBookBtn.onclick = () => formWrapper.style.visibility = 'visible';
-cancelBtn.onclick = () => formWrapper.style.visibility = 'hidden';
-
-// put them on the shelf
-const displayLibrary = (books) => {
-/* 
-    for (let i = 0; i < books.length; i++) {
-        const div = document.createElement('div');
-        div.setAttribute('class', 'book');
-
-        const title = document.createElement('header');
-        title.setAttribute('class', 'title');
-        title.textContent = books[i].title;
-
-        const author = document.createElement('p');
-        author.textContent = books[i].author;
-
-        const readStatus = document.createElement('div');
-        readStatus.setAttribute('class', 'read-status');
-        readStatus.textContent = books[i].readStatus ? 'Read ✅' : 'Not Read ❌';
-
-        div.appendChild(title);
-        div.appendChild(author);
-        div.appendChild(readStatus);
-
-        shelf.appendChild(div);
-    } */
-
-}
-
-displayLibrary(myLibrary);
+console.log(Library);
+updateLibraryDisplay(Library);
