@@ -10,7 +10,7 @@
     --bg-color: #a8835a;
     --shadows: #714b23;
     --purplish-color: #401b4d;
-    --book-bg-color: #ad9065;
+    --book-bg-color: #e5a991;
     --form-bg-color: #c9c7aa;
 }
 
@@ -42,8 +42,9 @@ button.add-book {
     display: block;
     background-color: var(--book-bg-color);
     border: 0;
+    font-size: 1.2em;
     padding: .5rem;
-    width: 80px;
+    width: 150px;
     margin: 1rem auto;
     border-radius: 20px;
     box-shadow: 0 0 5px var(--shadows);
@@ -173,8 +174,16 @@ form .buttons:active {
     width: 100%;
     text-align: center;
     font-size: 0.8em;
+    border: 1px solid black;
+    padding: .5em;
     border-top: 1px solid var(--shadows);
+    border-radius: 14px;
+    background-color: var(--form-bg-color);
     cursor: pointer;
+}
+
+.read:active {
+    background-color: var(--light-bg-color);
 }
 
 /* pg */
