@@ -10,7 +10,7 @@
     --bg-color: #a8835a;
     --shadows: #714b23;
     --purplish-color: #401b4d;
-    --book-bg-color: #e5a991;
+    --book-bg-color: #d3af87;
     --form-bg-color: #c9c7aa;
 }
 
@@ -208,4 +208,17 @@ form .buttons:active {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+}
+
+footer {
+    margin: .50em auto;
+    text-align: center;
+    font-size: smaller;
+    font-family: 'Redressed', cursive;
+}
+
+a {
+    color:whitesmoke;
+    text-decoration: none;
+    font-weight: bold;
 }
