@@ -4,6 +4,6 @@ A small Library Web App inspired from [The Odin Project Curriculum](https://www.
 
 Track your books and their read status.
 
-Go to Web App 👉 [Library](https://hiro776.github.io/library)
+Go to Web App 👉 [Library](https://r0hitm.github.io/library)
 
-&copy; [Rohit M](https://github.com/hiro776)
+&copy; [Rohit M](https://github.com/r0hitm)
