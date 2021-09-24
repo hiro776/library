@@ -9,11 +9,7 @@
 // Constants:
 const shelf = document.querySelector('.shelf');
 const form = document.querySelector('form');
-const cancelBtn = document.querySelector('button.cancel');
-const submitBtn = document.querySelector('button[type="submit"]');
-const addBookBtn = document.querySelector('button.add-book');
-
-let Library = [];
+const showFormBtn = document.querySelector('button.add-book');
 
 // Book Object Constructor.
 function Book(title, author, pageCount, readStatus) {
@@ -32,15 +28,23 @@ function Book(title, author, pageCount, readStatus) {
     }
 }
 
+const Library = JSON.parse(localStorage.getItem('Library')) || [];
+// Reconstruct Library elements as prototype of Book
+for (let i = 0; i < Library.length; i++) {
+    const book = Library[i];
+    Library[i] = new Book(book.title, book.author, book.pageCount, book.readStatus);
+}
+
 // save the current library to the local storage
 const saveLibrary = () => {
+    // Book constructor information is lost in saving.
+    // reconstruct when reading from localStorage
     localStorage.setItem('Library', JSON.stringify(Library));
 }
 
 const clearLibrarySave = () => {
     localStorage.clear();
 }
-
 
 const updateLocalStorage = () => {
     clearLibrarySave();
@@ -54,20 +58,8 @@ const addBookToLibrary = (book) => {
     }
 }
 
+const showForm = () => form.parentNode.style.visibility = 'visible';
 const closeForm = () => form.parentNode.style.visibility = 'hidden';
-
-addBookBtn.addEventListener('click', () => {
-    form.parentNode.style.visibility = 'visible';
-});
-
-cancelBtn.addEventListener('click', closeForm);
-window.addEventListener('keyup', e => {
-    // console.log(e.key);
-    if (e.key === 'Escape') {
-        closeForm();
-    }
-});
-
 const clearForm = () => {
     form.title.value = null;
     form.author.value = null;
@@ -75,6 +67,7 @@ const clearForm = () => {
     form.read.value = null;
 }
 
+showFormBtn.addEventListener('click', showForm);
 form.addEventListener("submit", e => {
     const read = (form.read.value === 'true') ? true : false;
     const newBook = new Book(form.title.value, form.author.value, form.pgcount.value, read);
@@ -87,15 +80,13 @@ form.addEventListener("submit", e => {
 
     e.preventDefault();
 });
-
-
+form.cancel.addEventListener('click', closeForm);
 
 // remove the Book from Library at index i
 const removeBookFromLibrary = i => {
     Library.splice(i, 1);
     updateLocalStorage();
 }
-
 
 // Number -> DocumentElement
 // create a div element with class 'book' and data-id as the
@@ -113,7 +104,7 @@ const createBookElement = (i) => {
     spanClose.addEventListener('click', () => {
         const index = spanClose.parentNode.getAttribute('data-id');
 
-        console.log(index);
+        // console.log(index);
 
         removeBookFromLibrary(index);
 
@@ -166,20 +157,6 @@ const updateLibraryDisplay = () => {
         shelf.appendChild(book);
     }
 }
-
-window.addEventListener('load', e => {
-    console.log('on load event listener triggered');
-
-    if (localStorage.length !== 0) {
-        Library = JSON.parse(localStorage.getItem('Library'));
-        Library.forEach(el => {
-            console.log(el);
-
-            
-        });
-        updateLibraryDisplay();
-    }
-});
 
 // for testing:
 // const book1 = new Book('Practical C Programming', 'Steve OUaline', 400, true);
