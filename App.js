@@ -13,7 +13,7 @@ const cancelBtn = document.querySelector('button.cancel');
 const submitBtn = document.querySelector('button[type="submit"]');
 const addBookBtn = document.querySelector('button.add-book');
 
-const Library = [];
+let Library = [];
 
 // Book Object Constructor.
 function Book(title, author, pageCount, readStatus) {
@@ -32,9 +32,26 @@ function Book(title, author, pageCount, readStatus) {
     }
 }
 
+// save the current library to the local storage
+const saveLibrary = () => {
+    localStorage.setItem('Library', JSON.stringify(Library));
+}
+
+const clearLibrarySave = () => {
+    localStorage.clear();
+}
+
+
+const updateLocalStorage = () => {
+    clearLibrarySave();
+    saveLibrary();
+}
+
 const addBookToLibrary = (book) => {
-    if (book.constructor === Book)
+    if (book.constructor === Book) {
         Library.push(book);
+        updateLocalStorage();
+    }
 }
 
 const closeForm = () => form.parentNode.style.visibility = 'hidden';
@@ -74,8 +91,9 @@ form.addEventListener("submit", e => {
 
 
 // remove the Book from Library at index i
-const removeBook = i => {
+const removeBookFromLibrary = i => {
     Library.splice(i, 1);
+    updateLocalStorage();
 }
 
 
@@ -97,7 +115,7 @@ const createBookElement = (i) => {
 
         console.log(index);
 
-        removeBook(index);
+        removeBookFromLibrary(index);
 
         updateLibraryDisplay();
     });
@@ -149,6 +167,20 @@ const updateLibraryDisplay = () => {
     }
 }
 
+window.addEventListener('load', e => {
+    console.log('on load event listener triggered');
+
+    if (localStorage.length !== 0) {
+        Library = JSON.parse(localStorage.getItem('Library'));
+        Library.forEach(el => {
+            console.log(el);
+
+            
+        });
+        updateLibraryDisplay();
+    }
+});
+
 // for testing:
 // const book1 = new Book('Practical C Programming', 'Steve OUaline', 400, true);
 // const book2 = new Book('A Complete Guide to C++ Programming', 'Ulla Kirch', 846, false);
@@ -163,4 +195,4 @@ const updateLibraryDisplay = () => {
 // addBookToLibrary(book4);
 // addBookToLibrary(book5);
 
-// updateLibraryDisplay(Library);
+// updateLibraryDisplay();
