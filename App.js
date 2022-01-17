@@ -4,27 +4,26 @@
  * This Project is inspired from The Odin Project Curriculum
  *
  * Author: Rohit Mehta
-**/
+ **/
 
 // Constants:
 const shelf = document.querySelector('.shelf');
 const form = document.querySelector('form');
 const showFormBtn = document.querySelector('button.add-book');
 
-// Book Object Constructor.
-function Book(title, author, pageCount, readStatus) {
-    this.title = title;
-    this.author = author;
-    this.pageCount = pageCount;
-    this.readStatus = readStatus; // True -means read, False -in all other cases
-    this.info = function () {
-        return title + ', ' + author + ', ' + pageCount + ', ' + readStatus;
-    }
-    this.toggleRead = function () {
-        if (this.readStatus)
-            this.readStatus = false;
-        else
-            this.readStatus = true;
+class Book {
+    constructor(title, author, pageCount, readStatus) {
+        this.title = title;
+        this.author = author;
+        this.pageCount = pageCount;
+        this.readStatus = readStatus; // True means read; otherwise False
+        this.getBookInfo = () => title + ', ' + author + ', ' + pageCount + ', ' + readStatus;
+        this.toggleReadStatus = function () {
+            if (this.readStatus)
+                this.readStatus = false;
+            else
+                this.readStatus = true;
+        }
     }
 }
 
@@ -131,7 +130,7 @@ const createBookElement = (i) => {
     readDiv.addEventListener('click', () => {
         const index = readDiv.parentNode.getAttribute('data-id');
 
-        Library[index].toggleRead();
+        Library[index].toggleReadStatus();
 
         updateLibraryDisplay();
     });
