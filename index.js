@@ -9,8 +9,10 @@
 // Constants:
 const shelf = document.getElementById("shelf");
 const form = document.querySelector('form[name="add-new-book"]');
-const formWrapper = document.querySelector('.form-wrapper');
-const formCancelBtn = document.querySelector('form[name="add-new-book"] button.cancel');
+const formWrapper = document.querySelector(".form-wrapper");
+const formCancelBtn = document.querySelector(
+    'form[name="add-new-book"] button.cancel'
+);
 const addBookBtn = document.querySelector("button.add-book");
 
 // Book class
@@ -21,9 +23,13 @@ class Book {
         this.length = length; // Number
         this.haveRead = haveRead; // True means yes, False means no
         this.getBookInfo = _ => {
-            return `${this.title} by ${this.author}, ${this.length} pages, ${
-                this.haveRead ? "Read" : "Not Read"
-            }`;
+            return {
+                title: this.title,
+                author: this.author,
+                length: this.length,
+                haveRead: this.haveRead,
+                toggleReadStatus: this.togglehaveRead,
+            };
         };
         this.togglehaveRead = _ => {
             if (this.haveRead) this.haveRead = false;
@@ -64,40 +70,42 @@ const addNewBook = book => {
 };
 
 // Event Listeners:
-addBookBtn.addEventListener('click', _ => {
-    formWrapper.classList.remove('hidden');
+addBookBtn.addEventListener("click", _ => {
+    formWrapper.classList.remove("hidden");
+    form.title.focus();
 });
 
-formCancelBtn.addEventListener('click', _ => {
-    formWrapper.classList.add('hidden');
+formCancelBtn.addEventListener("click", _ => {
+    formWrapper.classList.add("hidden");
 });
 
-// TODO:
-const clearForm = () => {
-    form.title.value = null;
-    form.author.value = null;
-    form.pgcount.value = null;
-    form.read.value = null;
-};
+// Some keyboard shortcuts for the form
+document.addEventListener("keydown", e => {
+    if (e.ctrlKey && e.key === "a") {
+        addBookBtn.click();
+    }
+    if (e.key === "Escape") {
+        formCancelBtn.click();
+    }
+});
 
 form.addEventListener("submit", e => {
-    const read = form.read.value === "true" ? true : false;
-    const newBook = new Book(
-        form.title.value,
-        form.author.value,
-        form.pgcount.value,
-        read
+    e.preventDefault(); // Prevent default form submit event
+    const formDataReader = new FormData(form);
+    const data = {};
+    formDataReader.forEach(function (value, key) {
+        data[key] = value;
+    });
+
+    addNewBook(
+        new Book(data.title, data.author, data.pgcount, data.read === "yes")
     );
-    addNewBook(newBook);
+    console.log(Library);
 
     updateLibraryDisplay();
-
-    clearForm();
-    closeForm();
-
-    e.preventDefault();
+    formWrapper.classList.add("hidden");
+    form.reset();
 });
-// form.cancel.addEventListener("click", closeForm);
 
 // remove the Book from Library at index i
 const deleteBook = i => {
@@ -105,68 +113,123 @@ const deleteBook = i => {
     updateLocalStorage();
 };
 
-// Number -> DocumentElement
-// create a div element with class 'book' and data-id as the
-// given number. Add book information from the Library[i]
+// Create a new Book DOM element and return it
 const createBookElement = i => {
+    const currentBookInfo = Library[i].getBookInfo();
+    console.log(currentBookInfo);
+
+    const bookWrapper = document.createElement("div");
+    bookWrapper.classList.add(
+        "book",
+        "my-3",
+        "mx-auto",
+        "w-58",
+        "rounded-lg",
+        "bg-red",
+        "shadow",
+        "text-center"
+    );
+    bookWrapper.setAttribute("data-id", i);
+
     const book = document.createElement("div");
-    book.setAttribute("class", "book");
-    book.setAttribute("data-id", i);
+    book.classList.add("p-4");
 
-    const spanClose = document.createElement("span");
-    spanClose.setAttribute("class", "close");
-    spanClose.setAttribute("title", "Remove this book");
-    spanClose.textContent = "x";
+    const titleH3 = document.createElement("h3");
+    titleH3.classList.add(
+        "title",
+        "text-xl",
+        "font-medium",
+        "text-gray-900",
+        "text-center",
+        "border-b-2"
+    );
+    titleH3.textContent = currentBookInfo.title;
 
-    spanClose.addEventListener("click", () => {
-        const index = spanClose.parentNode.getAttribute("data-id");
+    const authorP = document.createElement("p");
+    authorP.classList.add("author", "mt-1", "text-gray-500");
+    authorP.textContent = currentBookInfo.author;
 
-        // console.log(index);
+    const lengthP = document.createElement("p");
+    lengthP.classList.add("author", "mt-1", "text-gray-500");
+    lengthP.textContent = currentBookInfo.length + " Pages";
 
-        deleteBook(index);
+    const readStatusP = document.createElement("p");
+    readStatusP.classList.add("author", "mt-1", "text-gray-500");
+    readStatusP.textContent = currentBookInfo.haveRead
+        ? "Read ✅"
+        : "Not Read ❌";
 
+    const bookControls = document.createElement("div");
+    bookControls.classList.add("flex", "justify-center", "mt-2", "space-x-2");
+
+    const toggleReadStatusBtn = document.createElement("button");
+    toggleReadStatusBtn.classList.add(
+        "rounded-lg",
+        "border",
+        "border-primary-500",
+        "bg-green-500",
+        "text-sm",
+        "text-white",
+        "px-2",
+        "py-1.5",
+        "text-center",
+        "shadow-sm",
+        "transition-all",
+        "hover:border-primary-700",
+        "hover:bg-green-300",
+        "focus:ring",
+        "focus:ring-primary-200"
+    );
+    toggleReadStatusBtn.textContent = currentBookInfo.haveRead
+        ? "Mark as Unread"
+        : "Mark as Read";
+    toggleReadStatusBtn.addEventListener("click", _ => {
+        currentBookInfo.toggleReadStatus();
+        updateLocalStorage();
         updateLibraryDisplay();
     });
 
-    const titleDiv = document.createElement("div");
-    titleDiv.setAttribute("class", "title");
-    titleDiv.textContent = Library[i].title;
-
-    const authorDiv = document.createElement("div");
-    authorDiv.setAttribute("class", "author");
-    authorDiv.textContent = Library[i].author;
-
-    const pg = document.createElement("div");
-    pg.setAttribute("class", "pg");
-    pg.textContent = Library[i].length + " Pages";
-
-    const readDiv = document.createElement("div");
-    readDiv.setAttribute("class", "read");
-    readDiv.setAttribute("title", "Toggle Read Status");
-    readDiv.textContent = Library[i].haveRead ? "Read ✅" : "Not Read ❌";
-
-    readDiv.addEventListener("click", () => {
-        const index = readDiv.parentNode.getAttribute("data-id");
-
-        Library[index].togglehaveRead();
-
+    const deleteBookBtn = document.createElement("button");
+    deleteBookBtn.classList.add(
+        "rounded-lg",
+        "border",
+        "border-primary-500",
+        "bg-green-500",
+        "text-sm",
+        "text-white",
+        "px-2",
+        "py-1.5",
+        "text-center",
+        "shadow-sm",
+        "transition-all",
+        "hover:border-primary-700",
+        "hover:bg-green-300",
+        "focus:ring",
+        "focus:ring-primary-200"
+    );
+    deleteBookBtn.textContent = "Delete";
+    deleteBookBtn.addEventListener("click", _ => {
+        deleteBook(i);
         updateLibraryDisplay();
     });
 
-    book.appendChild(spanClose);
-    book.appendChild(titleDiv);
-    book.appendChild(authorDiv);
-    book.appendChild(pg);
-    book.appendChild(readDiv);
+    bookControls.appendChild(toggleReadStatusBtn);
+    bookControls.appendChild(deleteBookBtn);
 
-    return book;
+    book.appendChild(titleH3);
+    book.appendChild(authorP);
+    book.appendChild(lengthP);
+    book.appendChild(readStatusP);
+    book.appendChild(bookControls);
+
+    bookWrapper.appendChild(book);
+
+    return bookWrapper;
 };
 
 const updateLibraryDisplay = () => {
-    // remove all old childs from the shelf
-    while (shelf.firstChild) {
-        shelf.removeChild(shelf.firstChild);
-    }
+    // remove all children of book in the DOM
+    self.innerHTML = "";
 
     // and add new ones instead
     for (let i = 0; i < Library.length; i++) {
@@ -174,19 +237,5 @@ const updateLibraryDisplay = () => {
         shelf.appendChild(book);
     }
 };
-
-// for testing:
-// const book1 = new Book('Practical C Programming', 'Steve OUaline', 400, true);
-// const book2 = new Book('A Complete Guide to C++ Programming', 'Ulla Kirch', 846, false);
-// const book3 = new Book('Pro Git', 'Scott Chacon', 441, false);
-// const book4 = new Book('Clean Code', 'Robert C. Martin', 462, false);
-// const book5 = new Book('C Programming Tutorial', 'Tutorialspoint', 200, true);
-// // console.log(cprogramming.constructor === Book);
-
-// addNewBook(book1);
-// addNewBook(book2);
-// addNewBook(book3);
-// addNewBook(book4);
-// addNewBook(book5);
 
 updateLibraryDisplay();
