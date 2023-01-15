@@ -27,8 +27,7 @@ class Book {
                 title: this.title,
                 author: this.author,
                 length: this.length,
-                haveRead: this.haveRead,
-                toggleReadStatus: this.togglehaveRead,
+                haveRead: this.haveRead
             };
         };
         this.togglehaveRead = _ => {
@@ -69,6 +68,11 @@ const addNewBook = book => {
     }
 };
 
+const toggleReadStatus = i => {
+    Library[i].togglehaveRead();
+    updateLocalStorage();
+}
+
 // Event Listeners:
 addBookBtn.addEventListener("click", _ => {
     formWrapper.classList.remove("hidden");
@@ -100,7 +104,8 @@ form.addEventListener("submit", e => {
     addNewBook(
         new Book(data.title, data.author, data.pgcount, data.read === "yes")
     );
-    console.log(Library);
+    // console.log(Library);
+    updateLocalStorage();
 
     updateLibraryDisplay();
     formWrapper.classList.add("hidden");
@@ -122,8 +127,8 @@ const createBookElement = i => {
     bookWrapper.classList.add(
         "book",
         "my-3",
-        "mx-auto",
-        "w-58",
+        // "mx-auto",
+        "w-56",
         "rounded-lg",
         "bg-red",
         "shadow",
@@ -183,8 +188,10 @@ const createBookElement = i => {
     toggleReadStatusBtn.textContent = currentBookInfo.haveRead
         ? "Mark as Unread"
         : "Mark as Read";
-    toggleReadStatusBtn.addEventListener("click", _ => {
-        currentBookInfo.toggleReadStatus();
+    toggleReadStatusBtn.setAttribute("data-id", i);
+    toggleReadStatusBtn.addEventListener("click", e => {
+        const bookID = e.target.dataset.id;
+        toggleReadStatus(bookID);
         updateLocalStorage();
         updateLibraryDisplay();
     });
@@ -194,7 +201,7 @@ const createBookElement = i => {
         "rounded-lg",
         "border",
         "border-primary-500",
-        "bg-green-500",
+        "bg-red-500",
         "text-sm",
         "text-white",
         "px-2",
@@ -203,13 +210,14 @@ const createBookElement = i => {
         "shadow-sm",
         "transition-all",
         "hover:border-primary-700",
-        "hover:bg-green-300",
+        "hover:bg-red-300",
         "focus:ring",
         "focus:ring-primary-200"
     );
     deleteBookBtn.textContent = "Delete";
     deleteBookBtn.addEventListener("click", _ => {
         deleteBook(i);
+        updateLocalStorage();
         updateLibraryDisplay();
     });
 
@@ -229,7 +237,9 @@ const createBookElement = i => {
 
 const updateLibraryDisplay = () => {
     // remove all children of book in the DOM
-    self.innerHTML = "";
+    while (shelf.firstChild) {
+        shelf.removeChild(shelf.firstChild);
+    }
 
     // and add new ones instead
     for (let i = 0; i < Library.length; i++) {
